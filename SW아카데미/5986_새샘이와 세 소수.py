@@ -9,22 +9,18 @@ def getPrimeList(n):
 
     return [i for i in range(2,n) if seive[i]]
 
-def check(Sum,n,cnt):
+def check(Sum, cnt, i):
     global ans
-    if Sum > n or cnt > 3:
-        return
-
+    if i >= len(nums): return
     if cnt == 3:
-        if Sum == n:
-            ans += 1
-            return
-
-    for i in range(len(nums)):
-        check(Sum+nums[i],n,cnt+1)
+        if Sum == N: ans += 1
+        return
+    check(Sum+nums[i], cnt+1, i)
+    check(Sum, cnt, i+1)
 
 for tc in range(int(input())):
     N = int(input())
     ans = 0
     nums = getPrimeList(N)
-    check(0,N,0)
-    print(ans)
+    check(0,0,0)
+    print("#%d %d" %(tc+1,ans))
