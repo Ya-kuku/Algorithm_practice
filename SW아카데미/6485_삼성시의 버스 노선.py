@@ -9,7 +9,10 @@ for tc in range(int(input())):
             station[j] += 1
     print('#{}'.format(tc+1),end=' ')
     for i in st_no:
-        print(station[i],end='')
+        print(station[i],end=' ')
+    print()
+
+
 
 
 
