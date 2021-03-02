@@ -8,3 +8,5 @@ for tc in range(int(input())):
             else:
                 dp[i+1][j+1] = max(dp[i][j+1],dp[i+1][j])
     print('#{} {}'.format(tc+1, dp[len(a)][len(b)]))
+
+
