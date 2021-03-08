@@ -15,6 +15,7 @@ def dijkstra():
             # 맨 처음 다익스트라에서 drop 테이블은 전부 False
             # 다시 돌리는 다익스트라에서는 맨처음 최단경로의 값들을 drop 테이블에 True로 저장했으므로 조건만족 x
             if distance[i[0]] > cost and not dropped[now][i[0]]:
+                # 최소 가중치를 더해줘야 하기 때문에
                 distance[i[0]] = cost
                 heapq.heappush(heap_data,(cost,i[0]))
 def bfs():
