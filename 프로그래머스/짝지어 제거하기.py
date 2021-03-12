@@ -1,7 +1,18 @@
 def solution(s):
-    answer = 0
+    if len(s) % 2:
+        return 0
+    stack = []
+    for i in range(len(s)):
+        if not stack:
+            stack.append(s[i])
+        elif stack and stack[-1] == s[i]:
+            stack.pop()
+        else:
+            stack.append(s[i])
+    if stack:
+        return 0
+    else:
+        return 1
 
-    # [실행] 버튼을 누르면 출력 값을 볼 수 있습니다.
-    print('Hello Python')
 
-    return answer
+solution('baabaa')
