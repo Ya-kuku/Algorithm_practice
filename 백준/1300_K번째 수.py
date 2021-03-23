@@ -1,29 +1,23 @@
-def solve(data):
-    if len(data) <= 1:
-        return data
-    mid = len(data)//2
-    left = solve(data[:mid])
-    right = solve(data[mid:])
+# k 번째수는 k보다 작거나 같음 ex) 3 * 3 = 1,2,2,3,3,4,6,6,7
+# idx가 1,2,3 일때 모든 수는 작거나 같다
+# 따라서 k보다 작은 수의 갯수를 구하면 답을 알 수 있음
+def binSearch(start, end, n, k):
+    while start <= end:
+        mid = (start + end) // 2
 
-    i = j = 0
-    res = []
-    while i < len(left) and j < len(right):
-        if left[i] < right[j]:
-            res.append(left[i])
-            i += 1
+        cnt = 0
+        for i in range(1,n+1):
+            cnt += min(mid // i, n)
+
+        if cnt >= k:
+            answer = mid
+            end = mid - 1
         else:
-            res.append(right[j])
-            j += 1
-    res += left[i:]
-    res += right[j:]
+            start = mid + 1
 
-    return res
-N = int(input())
+    return answer
+
+n = int(input())
 k = int(input())
-nums = []
-array = [[0] * N for _ in range(N)]
-for i in range(N):
-    for j in range(N):
-        nums.append((i+1)*(j+1))
 
-print(solve(nums)[k+1])
+print(binSearch(1, n*n, n, k))
