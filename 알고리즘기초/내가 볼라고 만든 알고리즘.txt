@@ -1,0 +1,1569 @@
+# 정렬.
+
+## 1. Bubble sort
+
+```python
+def bubble(data):
+     for i in range(len(data)-1):
+         for j in range(len(data)-1-i):
+             if data[j] > data[j+1]:
+                 data[j], data[j+1] = data[j+1], data[j]
+     return data
+ a = [1,123,4,2,7,5,11,8,9]
+ print(bubble(a))
+
+def bubblesort(data):
+    for i in range(len(data)-1):
+        swap = False
+        for j in range(len(data)-i-1):
+            if data[j] > data[j+1]:
+                data[j], data[j+1] = data[j+1], data[j]
+                swap = True
+        # 정렬이 다 된후에 다시 순회하는걸 막아주는 코드, 시간 줄이기
+        if swap == False:
+            break
+    return data
+```
+
+
+
+## 2. Quick sort
+
+```python
+def qsort(data):
+    if len(data) <= 1:
+        return data
+
+    # left, right = list(), list()
+    # pivot = data[0]
+    #
+    # for index in range(1, len(data)):
+    #     if pivot > data[index]:
+    #         left.append(data[index])
+    #     else:
+    #         right.append(data[index])
+
+    # 이런식으로 바꿀수 있다
+    pivot = data[0]
+
+    left = [item for item in data[1:] if pivot > item]
+    right = [item for item in data[1:] if pivot <= item]
+
+    return qsort(left) + [pivot] + qsort(right)
+
+import random
+data_list = random.sample(range(100),10)
+
+print(qsort(data_list))
+```
+
+
+
+## 3. Insertion sort
+
+```python
+import random
+def insertionsort(data):
+    for i in range(len(data) - 1):
+        for j in range(i+1,0,-1):
+            if data[j] < data[j-1]:
+                data[j], data[j-1] = data[j-1], data[j]
+            else:
+                break
+    return data
+
+data_list = random.sample(range(100),10)
+
+print(insertionsort(data_list))
+```
+
+
+
+## 4. Merge sort
+
+```python
+def mergesplit(data):
+    if len(data) <= 1:
+        return data
+    medium = int(len(data)/2)
+    left = mergesplit(data[:medium])
+    right = mergesplit(data[medium:])
+    return merge(left, right)
+
+def merge(left, right):
+    merged = list()
+    left_P, right_P = 0,0
+
+    # case1 left/right 아직 남아있을 때
+
+    while len(left) > left_P and len(right) > right_P:
+        if left[left_P] > right[right_P]:
+            merged.append(right[right_P])
+            right_P += 1
+        else:
+            merged.append(left[left_P])
+            left_P += 1
+
+    # case2 left 만 남아있을 때
+    while len(left) > left_P:
+        merged.append(left[left_P])
+        left_P += 1
+
+    # case2 right 남아있을 때
+    while len(right) > right_P:
+        merged.append(right[right_P])
+        right_P += 1
+
+    return merged
+
+print(mergesplit([1,6,2,3,8,5,2,3,12]))
+```
+
+
+
+## 5. Selection sort
+
+```python
+import random
+def selectionsort(data):
+    for i in range(len(data) - 1):
+        Min = i
+        for j in range(i+1,len(data)):
+            if data[Min] > data[j]:
+                Min = j
+        # 최초의 기준점과 자리를 바꾸기 때문에 i의 값과 자리 swap
+        data[Min], data[i] = data[i], data[Min]
+    return data
+
+data_list = random.sample(range(100),10)
+
+print(selectionsort(data_list))
+```
+
+
+
+# DFS & BFS.
+
+## 1. dfs & bfs
+
+1) 그래프의 모든 정점을 방문하는 문제
+
+​	단순히 모든 정점을 방문하는 것이 중요한 문제는 두 가지 방법 모두 사용 가능
+
+2) 경로의 특징을 저장해둬야 하는 문제
+
+​	예를 들어 각 정점에 숫자가 적혀있고, a 부터 b 까지 가는 경로를 구하는데 같	은 숫자가 있으면 안된다는 문제 등 각각의 경로마다 특징을 저장해둬야 할때	는 DFS(BFS는 경로의 특징을 가지지 못함)
+
+3) 최단거리 문제
+
+​	미로 찾기 등 최단거리 경우 BFS가 유리
+
+​	BFS경로 탐색할 경우 현재 노드에서 가까운 곳부터 찾기 때문에 탐색시 먼저 	찾아지는 곳이 해답이 된다
+
+- 검색 대상 그래프가 크면 DFS
+- 규모가 크지 않고, 검색 시작 지점부터 찾고자하는 대상이 멀지 않다면 BFS
+
+```python
+graph = dict()
+
+graph['A'] = ['B', 'C']
+graph['B'] = ['A', 'D']
+graph['C'] = ['A', 'G', 'H', 'I']
+graph['D'] = ['B', 'E', 'F']
+graph['E'] = ['D']
+graph['F'] = ['D']
+graph['G'] = ['C']
+graph['H'] = ['C']
+graph['I'] = ['C', 'J']
+graph['J'] = ['I']
+
+def bfs(graph,start_node):
+    visited = list()
+    need_visit = list()
+
+    need_visit.append(start_node)
+
+    while need_visit:
+        node = need_visit.pop(0)
+        if node not in visited:
+            visited.append(node)
+            need_visit.extend(graph[node])
+    return visited
+
+print(bfs(graph,'A'))
+
+def dfs(graph, start_node):
+    visited, need_visit =list(), list()
+    need_visit.append(start_node)
+
+    while need_visit:
+        node = need_visit.pop()
+        if node not in visited:
+            visited.append(node)
+            need_visit.extend(graph[node])
+    return visited
+
+print(dfs(graph,'A'))
+```
+
+
+
+## 2. Queue
+
+```python
+일반적인 큐
+import queue
+data_queue = queue.Queue()
+
+data_queue.put("funcoding")
+data_queue.put(1)
+
+print(data_queue.qsize())
+
+print(data_queue.get())
+print(data_queue.get())
+
+LIFO 큐(stack 같은 큐)
+
+import queue
+data_queue = queue.LifoQueue()
+data_queue.put("첫번째")
+data_queue.put("두번째")
+
+print(data_queue.qsize())
+
+print(data_queue.get())
+print(data_queue.get())
+
+stack_list = list()
+
+def push(data):
+    stack_list.append(data)
+
+def pop():
+    data = stack_list[-1]
+    del stack_list[-1]
+    return data
+
+for index in range(10):
+    push(index)
+
+```
+
+
+
+## 3. Priority queue
+
+```python
+Priority 큐
+import queue
+data_queue = queue.PriorityQueue()
+data_queue.put((10,"korea"))  
+# 첫번째 숫자가 우선순위고 두번째인자가 데이터 튜플 형식으로 들어감
+data_queue.put((5,"china"))
+data_queue.put((15,"usa"))
+
+print(data_queue.qsize())
+
+print(data_queue.get()) # 우선순위가 5가 제일 높기때문에 china가 먼저 뽑힘
+print(data_queue.get()) # 그 다음 우선순위는 10이기 때문에 korea가 뽑힘
+```
+
+
+
+## 4. Queue 구현
+
+```python
+enqueue, dequeue 구현하기
+queue_list = list()
+
+def enqueue(data):
+     queue_list.append(data)
+
+def dequeue():
+     data = queue_list[0]
+     del queue_list[0]
+     return data
+
+data_stack = list()
+
+data_stack.append(1)
+data_stack.append(2)
+
+print(data_stack)
+print(data_stack.pop())
+```
+
+
+
+## 5. Recursive
+
+```python
+def factorial(num):
+    if num <= 1:
+        return 1
+    else:
+        return num * factorial(num-1)
+
+print(factorial(5))
+print(factorial(10))
+
+def palindrome(string):
+    if len(string) <= 1:
+        return True
+
+    if string[0] == string[-1]:
+        # string 1:-1 부분을 재귀 호출
+        return palindrome(string[1:-1])
+    else:
+        return False
+
+def func(n):
+    print(n)
+    if n == 1:
+        return n
+    if n % 2:
+        return func((3 * n) + 1)
+    else:
+        return (func(int(n / 2)))
+
+# print(func(3))
+
+# 정수 n을 1,2,3의 조합으로 나타내는 경우
+
+def func2(data):
+    if data == 1:
+        return 1
+    elif data == 2:
+        return 2
+    elif data == 3:
+        return 4
+    else:
+        return func2(data-1) + func2(data-2) + func2(data-3)
+
+print(func2(5))
+```
+
+
+
+## 6.  Backtracking
+
+```python
+# nqueen
+def is_available(candidate, current_col):
+    current_row = len(candidate)
+    for queen_row in range(current_row):
+        if candidate[queen_row] == current_col or abs(candidate[queen_row] -current_col) == current_row - queen_row:
+            return False
+        return True
+
+def dfs(N, current_row, current_candidtae,final_result):
+    if current_row == N:
+        final_result.append(current_candidtae[:])
+        return
+
+    for candidate_col in range(N):
+        # 새로운 행에서 후보군들 중에 가능한 후보군이 있는지
+        if is_available(current_candidtae,candidate_col):
+            current_candidtae.append(candidate_col)
+            dfs(N, current_row+1, current_candidtae, final_result)
+            # 추가한 후보군이 불가능한 경우 pop
+            current_candidtae.pop()
+
+def nqueens(N):
+    final_result = []
+    dfs(N,0,[],final_result)
+    return final_result
+
+# 프로그래머스
+# 타겟넘버 예시 idx 비교
+answer = 0
+def dfs(idx, numbers, target, ans):
+    global answer
+    N = len(numbers)
+    if idx == N and target == ans:
+        answer += 1
+        return
+    if idx == N:
+        return
+
+    dfs(idx + 1, numbers, target, ans + numbers[idx])
+    dfs(idx + 1, numbers, target, ans - numbers[idx])
+
+
+def solution(numbers, target):
+    global answer
+    dfs(0, numbers, target, 0)
+    return answer
+```
+
+
+
+# 그래프.
+
+## 1. Tree(정석)
+
+```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+class NodeMgmt:
+    def __init__(self,head):
+        self.head = head
+
+    def insert(self, value):
+        self.current_node = self.head
+        while True:
+            # 왼쪽으로 가야한다
+            if value < self.current_node.value:
+                # 만약에 왼쪽으로 갔을 경우 해당 브랜치에 값이 있다면
+                if self.current_node.left != None:
+                    self.current_node = self.current_node.left
+                else:
+                    # 만약에 없다면 값을 넣어주기
+                    self.current_node.left = Node(value)
+                    break
+            else:
+                if self.current_node.right != None:
+                    self.current_node = self.current_node.right
+                else:
+                    self.current_node.right = Node(value)
+                    break
+
+    # 이진 탐색 코드
+    def search(self, value):
+        self.current_node = self.head
+        # 순회를 시작하니까 값이 있을경우만 while문 실행
+        while self.current_node:
+            if self.current_node.value == value:
+                return True
+            elif value < self.current_node.value:
+                # 여기서 없으면 None으로 되기때문에 while문 돌아갔을 때 실행 중지됨
+                self.current_node = self.current_node.left
+            else:
+                self.current_node = self.current_node.right
+        return False
+
+    def delete(self,value):
+        searched = False
+        self.current_node = self.head
+        self.parent = self.head
+        while self.current_node:
+            if self.current_node.value == value:
+                searched = True
+                break
+            elif value < self.current_node.value:
+                self.parent = self.current_node
+                self.current_node = self.current_node.left
+            else:
+                self.parent = self.current_node
+                self.current_node = self.current_node.right
+
+        if searched == False:
+            return False
+
+        # 이후부터 case들을 분리해서, 코드 작성
+
+        #self.current_node 가 삭제할 Node, self.parent는 삭제할 Node의 parent Node인 상태
+
+        if self.current_node.left == None and self.current_node.right == None:
+            if value < self.parent.value:
+                self.parent.left = None
+            else:
+                self.parent.right = None
+            del self.current_node
+
+        # 삭제할 노드가 자식을 한개 가지고 있는경우
+        if self.current_node.left != None and self.current_node.right == None:
+            if value < self.parent.value:
+                self.parent.left = self.current_node.left
+            else:
+                self.parent.right = self.current_node.left
+
+        elif self.current_node.left == None and self.current_node.right != None:
+            if value < self.parent.value:
+                self.parent.left = self.current_node.right
+            else:
+                self.parent.right = self.current_node.right
+
+        # 삭제할 노드가 자식노드를 두 개 가지고 있을 경우
+        if self.current_node.left != None and self.current_node.right != None:
+            # case 3-1
+            if value < self.parent.value:
+                self.change_node = self.current_node.right
+                self.current_node_parent = self.current_node.right
+                while self.change_node.left != None:
+                    self.change_node_parent = self.change_node
+                    self.change_node = self.change_node.left
+                if self.change_node.right != None:
+                    self.change_node_parent.left = self.change_node.right
+                else:
+                    # 가장 작은값을 찾았으니 그 가장작은 노드의 부모 노드의 왼쪽 브랜치를 끊어줘야함
+                    self.change_node_parent.left = None
+                # 삭제할 노드의 부모 노드에다가 연결
+                self.parent.left = self.change_node
+                self.change_node.right = self.current_node.right
+                self.change_node.left = self.change_node.left
+
+        # case 2
+        else:
+            self.change_node = self.current_node.right
+            self.change_node_parent = self.current_node.right
+            while self.change_node.left != None:
+                self.change_node_parent = self.change_node
+                self.change_node = self.change_node.left
+            if self.change_node.right != None:
+                self.change_node_parent.left = self.change_node.right
+            else:
+                self.change_node_parent.left = None
+            self.parent.right = self.change_node
+            self.change_node.left = self.current_node.left
+            self.change_node.right = self.current_node.right
+head = Node(1)
+BST = NodeMgmt(head)
+BST.insert(2)
+BST.insert(3)
+BST.insert(0)
+BST.insert(4)
+BST.insert(8)
+
+print(BST.search(7))
+```
+
+
+
+## 2. Union Find(합집합)
+
+```python
+def find(x):
+    if x == parent[x]:
+        return x
+    else:
+        p = find(parent[x])
+        parent[x] = p
+        return parent[x]
+
+def union(x,y):
+    x = find(x)
+    y = find(y)
+
+    parent[y] = x
+
+parent = []
+
+for i in range(0,5):
+    parent.append(i)
+
+union(1,4)
+union(2,4)
+
+for i in range(1,len(parent)):
+    print(find(i),end='')
+```
+
+> 노드를 거슬러 올라가서 현재 연결된 노드의 값들을 루트노드(부모노드)의 값으로 바꿔준다.
+>
+> 연결된 노드를 순차적으로 거슬러 올라가 해당 노드의 값을 부모노드의 값으로 변경하는 방식
+>
+> 현재 연결된 최상위 노드를 알 수 있게 됨
+
+
+
+## 3. Dijkstra
+
+최단경로 알고리즘, 하나의 정점에서 다른 모든 정점까지의 최단경로를 구하는 알고리즘
+
+* 음의 가중치가 있으면 안된다.
+* 1차원 배열을 사용, 각 정점에서 최솟값으로만 선택
+* 최단 경로를 표시해두는 배열은 무한대로 표기
+* heapq를 사용해 구현하면 좀더 빠르게 수행가능, o(V**2)
+* 우선순위 큐를 사용하면 o((V+E) logN))   V = 정점, E = 간선의 수
+* 정점의 수가 적거나 간선의 개수가 매우 많은 경우에는 우선순위큐 사용 x
+* BOJ 5719, 10282 참고
+
+```python
+import heapq
+def dijkstra(start,adj,distance):
+    heap_data = []
+    # 처음 시작점 가중치 0, 시작점 삽입
+    heapq.heappush(heap_data,(0,start))
+    distance[start] = 0
+
+    while heap_data:
+        # 현재 가중치, 현재 노드
+        dist, now = heapq.heappop(heap_data)
+        # 현재 정점의 값이 현재 가중치 보다 작으면 넘어감
+        if distance[now] < dist:
+            continue
+
+        # 현재 정점에서 갈 수 있는 다른 정점 뽑기
+        for i in adj[now]:
+            # cost는 현재 가중치 + 갈 수 있는 다른정점의 가중치 값
+            cost = dist + i[1]
+            # 갈 수 있는 정점의 가중치 값을 cost와 비교
+            if distance[i[0]] > cost:
+                distance[i[0]] = cost
+                heapq.heappush(heap_data,(cost,i[0]))
+
+def solution(N, road, K):
+    answer = 0
+    distance = [1e9] * (N+1)
+    adj = [[] for _ in range(N+1)]
+
+    for info in road:
+        x, y, cost = info
+        adj[x].append((y,cost))
+        adj[y].append((x, cost))
+    dijkstra(1,adj,distance)
+    print(distance)
+    for i in distance:
+        if i <= K: answer += 1
+
+    return answer
+```
+
+### - Heapq
+
+완전 이진 트리의 일종으로 우선순위 큐를 위하여 만들어진 자료구조
+
+- 기본적으로 라이브러리 제공은 최소힙
+- 최대힙은 원소 값을 음수로 적용시켜서 활용
+- 힙 트리에서는 중복된 값 허용
+- 일종의 반정렬 상태
+- 힙 모듈은 별개의 자료구조가 아님(Pyhton)
+- o(logN)의 복잡도, 단, 기존 리스트를 힙으로 만들려면 o(N)  / heapify로 기존리스트 변환
+
+```python
+# 힙은 원소를 삭제할 때마다 이진트리의 재배치를 통해 매번 새로운 최소값을 idx = 0 에 위치시킨다.
+# 따라서 뽑아낸 값은 최솟값이 맞지만 idx = 1 or idx = 2 이 두번째, 세번째 최솟값을 의미하진 않음
+
+# 힙에서의 부모 노드와 자식 노드의 관계
+# 왼쪽 자식의 인덱스 = (부모의 인덱스) * 2
+# 오른쪽 자식의 인덱스 = (부모의 인덱스) * 2 + 1
+# 부모의 인덱스 = (자식의 인덱스) / 2
+
+import heapq
+heap_data = []
+# 원소 삽입
+heapq.heappush(heap_data,(0,start))
+
+# 원소 추출
+dist, now = heapq.heappop(heap_data)
+
+# 힙정렬은 빈배열에 뽑아낸 힙원소를 넣는 방식으로 구현
+
+```
+
+
+
+## 4. Bellman-Frod
+
+- 최단경로 알고리즘, 하나의 정점에서 다른 모든 정점까지의 최단경로를 구하는 알고리즘
+
+- 단, 목표는 다익스트라와 동일한 한 정점에서 다른 정점까지의 최단거리를 구할 수 있지만 음의 가중치가 있는 경우에 사용되는 알고리즘
+- 음수 사이클이 그래프 내에 존재하게 되면 정확한 최단경로를 보장할 수 없기 때문에
+- 2중 for문을 이용해 가능한 모든 경우를 체크
+
+```python
+# 다익스트라
+1. 매번 방문하지 않은 노드 중 최단 거리가 가장 짧은 노드 선택
+2. 음수 간선 없으면 최적해 찾기 가능
+O(logN)의 복잡도
+# 벨만 포드
+1. 매번 모든 간선을 전부 확인
+	* 따라서 다이스트라 알고리즘에서 최적의 해를 항상 포함
+2. 다익스트라 알고리즘에 비해 오래걸리지만, 음수 사이클 탐지 가능. 
+O(VE)의 복잡도
+```
+
+
+
+```python
+'''
+1. 출발 노드 설정
+2. 최단 거리 테이블 초기화
+3. 다음 과정을 N-1번 반복
+	3-1. 전체 간선 E개를 하나씩 확인
+	3-2. 각 간선을 거쳐 다른 노드로 가는 비용을 꼐산하여 최단 거리 갱신
+4. 음수 사이클 존재 여부 체크는 3번 과정을 한 번 더 수행, 즉 노드의 전체 수만큼 반복문 진행
+
+왜 V번 돌리나?
+* 최단 경로라는 말은 같은 정점을 두 번 지날 일이 없기 때문에 가능한 최단 경로에서 거치는 간선의 개수는 많아봐야 V-1개입니다. 따라서 루프를 V-1번 돌리는데, K번째 루프에서 시작점으로부터 각 정점으로 K개의 간선을 거쳐서 도달할 수 있는 최단 경로를 다 갱신해주는 것이 기본 아이디어입니다.
+'''
+
+# 참고 BOJ 11657 타임머신
+
+def bf(start):
+    # 시작 노드 초기화
+    dist[start] = 0
+    # 전체 n번의 라운드를 반복
+    for i in range(n):
+        # 매 반복마다 모든 간선을 확인
+        for j in range(m):
+            # 담겨 있는 모든 간선 정보를 확인
+            cur = edges[j][0]
+            next_node = edges[j][1]
+            cost = edges[j][2]
+            # 현재 간선을 거쳐 다른 노드로 이동하는 거리가 더 짧은 경우 최단 거리 갱신
+            if dist[cur] != 1e9 and dist[next_node] > dist[cur] + cost:
+                dist[next_node] = dist[cur] + cost
+                # n번째 라운드에서도 값이 갱신된다면 음수 순환 존재
+                # 항상 최단거리를 구해서 저장했는데 전체 최단거리를 구한 후 한번더 반복문을 돌렸을 때 최솟값이 갱신이 된다는것은
+                # 음수의 사이클이 존재하기 때문에 최솟값이 갱신이 되는 것
+                if i == n-1:
+                    return True
+    return False
+
+n, m = map(int,input().split())
+# 모든 간선에 대한 정보 담는 리스트
+edges = []
+# 최단 거리를 담아주는 리스트
+dist = [1e9] * (n+1)
+
+for _ in range(m):
+    a, b, c = map(int,input().split())
+    edges.append((a,b,c))
+
+# 벨만 포드 알고리즘
+check_cycle = bf(1)
+
+if check_cycle:
+    print(-1)
+else:
+    for i in range(2,n+1):
+
+        if dist[i] == 1e9:
+            print(-1)
+        else:
+            print(dist[i])
+```
+
+
+
+## 5. Floyd  Warshall
+
+- 모든 정점에서 모든 정점으로의 최단 경로를 구할 때
+- 기본적으로 거쳐가는 정점을 기준으로 알고리즘 수행
+- 2차원 배열을 사용
+- 반복문 3개로 구현 가능
+- 거쳐가는 정점의 반복문이 맨위에 있어야 누락되지 않고 방문 가능
+
+```python
+# 참고 
+# 백준,맥주 마시면서 걸어가기
+n = 4
+max = 1000
+graph = [
+    [0, 5, max, 8],
+    [7, 0, 9, max],
+    [2, max, 0, 4],
+    [max, max, 3, 0]
+]
+print(graph)    
+
+# k는 거쳐가는 정점
+# graph[i][j]는 i에서 j로 가는 방법
+# 보통 자기 자신으로 가는 경우는 없으므로 i = j 이면 넘어가는 경우도 있음
+for k in range(n):
+    for i in range(n):
+        for j in range(n):
+            if graph[i][k] + graph[k][j] < graph[i][j]:
+                graph[i][j] = graph[i][k] + graph[k][j]
+
+print(graph)
+
+# 백준, 플로이드
+n = int(input())
+m = int(input())
+arr = [[1e9] * n for _ in range(n)]
+for _ in range(m):
+    x,y, cost = map(int,input().split())
+    # 연결된 도시의 노선이 하나가 아닐 수 있기때문에 최솟값 비교해서 넣어주기
+    arr[x-1][y-1] = min(cost,arr[x-1][y-1])
+
+
+for k in range(n):
+    for i in range(n):
+        for j in range(n):
+            if i == j: arr[i][j] = 0; continue
+            # k가 모든 정점을 순환하는 인덱스를 가지니까 i -> k -> j 의 거친 값과 현재 가지고 있는 값을 비교해주는것
+            if arr[i][k] + arr[k][j] < arr[i][j]:
+                arr[i][j] = arr[i][k] + arr[k][j]
+            # arr[i][j] = min(arr[i][j], arr[i][k] + arr[k][j])
+
+# 없는 노선의 경우는 Inf값이 그대로 들어가 있으니 바꿔주기
+for i in arr:
+    for j in i:
+        if j == 1e9:
+            print(0, end=' ')
+        else:
+            print(j,end=' ')
+    print()
+
+```
+
+
+
+## 6. MST(Minimum segment Tree)
+
+- 신장 트리(Spanning Tree)
+
+  모든 노드가 서로 연결
+
+  트리의 속성을 만족(사이클이 존재 x)
+
+- 최소 신장 트리(MST, Minimum Spanning Tree)
+
+  가능한 신장트리 중 간선의 가중치 합이 최소인 신장트리
+
+  
+
+  - 크루스칼 알고리즘 = 모든 간선을 대상으로 해서 가장 가중치가 작은 간선 부터 연결함
+
+  - 프림 알고리즘 = 지금 연결된 노드에 붙어 있는 간선 중에서 가중치가 작은 간선을 선택하는 방식
+
+### - Kruskal
+
+모든 간선을 대상으로 해서 가장 가중치가 작은 간선부터 연결 
+
+- Union-Find 사용
+- BOJ 1774 참고
+
+```python
+# 신장 트리(Spanning Tree)
+# 모든 노드가 서로 연결
+# 트리의 속성을 만족(사이클이 존재 x)
+
+# 최소 신장 트리(MST, Minimum Spanning Tree)
+# 가능한 신장트리 중 간선의 가중치 합이 최소인 신장트리
+
+# 크루스칼 알고리즘 = 모든 간선을 대상으로 해서 가장 가중치가 작은 간선 부터 연결함
+# 프림 알고리즘 = 지금 연결된 노드에 붙어 있는 간선 중에서 가중치가 작은 간선을 선택하는 방식
+
+# Kruskal's Algorithm
+mygraph = {
+    'vertices': ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+    'edges': [
+        (7, 'A', 'B'),
+        (5, 'A', 'D'),
+        (7, 'B', 'A'),
+        (8, 'B', 'C'),
+        (9, 'B', 'D'),
+        (7, 'B', 'E'),
+        (8, 'C', 'B'),
+        (5, 'C', 'E'),
+        (5, 'D', 'A'),
+        (9, 'D', 'B'),
+        (7, 'D', 'E'),
+        (6, 'D', 'F'),
+        (7, 'E', 'B'),
+        (5, 'E', 'C'),
+        (7, 'E', 'D'),
+        (8, 'E', 'F'),
+        (9, 'E', 'G'),
+        (6, 'F', 'D'),
+        (8, 'F', 'E'),
+        (11, 'F', 'G'),
+        (9, 'G', 'E'),
+        (11, 'G', 'F')
+    ]
+}
+
+parent = dict()
+rank = dict()
+
+def find(node):
+    # path compression 기법
+    # parent[node] == node / 루트노드
+    # 루트노드가 아닐 시에 루트노드를 찾기 위한 과정
+    if parent[node] != node:
+        parent[node] = find(parent[node])
+    return parent[node]
+
+def union(node_v,node_u):
+    root1 = find(node_v)
+    root2 = find(node_u)
+
+    # union-by-rank 기법
+    if rank[root1] > rank[root2]:
+        parent[root2] = root1
+    else:
+        parent[root1] = root2
+
+        # 랭크가 같을 시에 두 루트노드 중 아무거나 하나를 루트노드로 만들어준다
+        if rank[root1] == rank[root2]:
+            rank[root2] += 1
+
+def make_set(node):
+    parent[node] = node
+    rank[node] = 0
+
+def kruskal(graph):
+    mst = list()
+
+    # 1. 초기화
+    for node in graph['vertices']:
+        make_set(node)
+
+    # 2. 간선 weight 기반 sorting
+    # 크루스칼에서 간선 가중치를 크기별로 정렬해줘야 함
+    edges = graph['edges']
+    edges.sort()
+
+    # 3. 간선 연결(사이클 없는)
+    for edge in edges:
+        weight, node_v, node_u = edge
+        # 사이클이 없는지 확인
+        if find(node_v) != find(node_u):
+            union(node_v, node_u)
+            mst.append(edge)
+
+    return mst
+
+# 한줄씩 출력할때 언패킹을 해줘야 각각의 요소로 출력 가능
+print(*kruskal(mygraph),sep='\n')
+
+```
+
+```python
+# BOJ 1774
+import math
+import sys
+input = sys.stdin.readline
+
+def get_distance(p1, p2):
+    a = p1[0] - p2[0]
+    b = p1[1] - p2[1]
+    return math.sqrt((a * a) + (b * b))
+
+def get_parent(parent, n):
+    if parent[n] == n:
+        return n
+    return get_parent(parent, parent[n])
+
+def union_parent(parent, a, b):
+    a = get_parent(parent, a)
+    b = get_parent(parent, b)
+    # 루트노드 합치기
+    if a < b:
+        parent[b] = a
+    else:
+        parent[a] = b
+
+def find_parent(parent, a, b):
+    a = get_parent(parent, a)
+    b = get_parent(parent, b)
+    if a == b:
+        return True
+    else:
+        return False
+
+edges = []
+parent = {}
+locations = []
+n, m = map(int, input().split())
+
+for _ in range(n):
+    x, y = map(int, input().split())
+    # 좌표의 위치 저장
+    locations.append((x, y))
+
+length = len(locations)
+for i in range(length - 1):
+    for j in range(i + 1, length):
+        # 각 좌표별로 거리값 math sqrt로 계산해서 저장
+         edges.append((i + 1, j + 1, get_distance(locations[i], locations[j])))
+
+# make_set
+for i in range(1, n + 1):
+    parent[i] = i
+
+# 이미 연결된 부분 합쳐주기
+for i in range(m):
+    a, b = map(int, input().split())
+    union_parent(parent, a, b)
+
+edges.sort(key=lambda data: data[2])
+
+result = 0
+for a, b, cost in edges:
+    if not find_parent(parent, a, b):
+        union_parent(parent, a, b)
+        result += cost
+
+print("%0.2f" % result)
+```
+
+
+
+### - Prim
+
+프림 알고리즘 = 지금 연결된 노드에 붙어 있는 간선 중에서 가중치가 작은 간선을 선택하는 방식(heapify)
+
+```python
+# 신장 트리(Spanning Tree)
+# 모든 노드가 서로 연결
+# 트리의 속성을 만족(사이클이 존재 x)
+
+# 최소 신장 트리(MST, Minimum Spanning Tree)
+# 가능한 신장트리 중 간선의 가중치 합이 최소인 신장트리
+
+# 크루스칼 알고리즘 = 모든 간선을 대상으로 해서 가장 가중치가 작은 간선 부터 연결함
+# 프림 알고리즘 = 지금 연결된 노드에 붙어 있는 간선 중에서 가중치가 작은 간선을 선택하는 방식
+
+# Prim's algorithm
+import heapq
+
+queue = []
+graph_data = [[2, 'A'], [5, 'B'], [3, 'C']]
+
+# for edge in graph_data:
+#     heapq.heappush(queue, edge)
+
+# for index in range(len(queue)):
+#     print(heapq.heappop(queue))
+
+# heapify를 쓰면 위에 코드와 같다
+heapq.heapify(graph_data)
+
+for index in range(len(graph_data)):
+    print(heapq.heappop(graph_data))
+
+# defaultdict 함수를 사용해서, key에 대한 value를 지정하지 않았을 시, 빈 리스트로 초기화하기
+from collections import defaultdict
+
+list_dict = defaultdict(list)
+print (list_dict['key1'])
+
+
+
+myedges = [
+    (7, 'A', 'B'), (5, 'A', 'D'),
+    (8, 'B', 'C'), (9, 'B', 'D'), (7, 'B', 'E'),
+    (5, 'C', 'E'),
+    (7, 'D', 'E'), (6, 'D', 'F'),
+    (8, 'E', 'F'), (9, 'E', 'G'),
+    (11, 'F', 'G')
+]
+
+from heapq import *
+
+def prim(start_node, edges):
+    adjacent_edges = defaultdict(list)
+    mst = list()
+    for weight, n1, n2 in edges:
+        # n1에서 n2로 가는 경우
+        adjacent_edges[n1].append((weight,n1,n2))
+        # n2에서 n1로 가는 경우
+        adjacent_edges[n2].append((weight,n1,n2))
+
+    connected_nodes = set(start_node)
+    candidate_edge_list = adjacent_edges[start_node]
+    heapify(candidate_edge_list)
+
+    while candidate_edge_list:
+        # 여기서 추출되는 값은 간선의 가중치 중 가장 작은값이 뽑힘 / n1은 현재 정점, n2는 n1과 연결된 인접 정점
+        weight, n1, n2 = heappop(candidate_edge_list)
+        # 인접정점이 이미 연결된 노드 집합에 없으면, 연결된 노드 set에 포함해야 한다
+        if n2 not in connected_nodes:
+            connected_nodes.add(n2)
+            mst.append((weight,n1,n2))
+
+            # 인접 정점의 새로운 인접 정점들의 리스트를 후보군에 넣어 준다
+            for edge in adjacent_edges[n2]:
+                # 새로운 인접 정점의 연결된 정점들 중에서 이미 연결된 노드에 들어있지 않는 경우만
+                # 시간복잡도 줄여주기 위한 조건
+                if edge[2] not in connected_nodes:
+                    heappush(candidate_edge_list, edge)
+
+    return mst
+
+print(*prim('A',myedges),sep='\n')
+
+
+# 개선된 프림 알고리즘(간선이 아닌 노드 중심으로) 다시 공부
+
+
+```
+
+
+
+# Etc.
+
+## Hash
+
+```python
+# hash_table = list([0 for _ in range(10)])
+# print(hash_table)
+#
+# def hash_func(key):
+#     return key % 5
+#
+# data = 'Andy'
+# def storage(data,value):
+#     key = ord(data[0])
+#     hash_adress = hash_func(key)
+#     hash_table[hash_adress] = value
+
+hash_table = list([0 for _ in range(8)])
+def get_key(data):
+    return hash(data)
+
+def hash_function(key):
+    return key % 8
+
+def save_data(data,value):
+    hash_address = hash_function(get_key(data))
+    hash_table[hash_address] = value
+
+def read_data(data):
+    hash_address = hash_function(get_key(data))
+    return hash_table[hash_address]
+
+save_data('Dave', '0102030200')
+save_data('Andy', '01033232200')
+read_data('Dave')
+
+print(hash_table)
+
+#SHA-1 해쉬에서 안전한 알고리즘
+import hashlib
+
+data = 'encode'.encode()
+hash_object = hashlib.sha1()
+hash_object.update(data)
+# hash_object.update(b'test')  위에꺼랑 같음
+hex_dig = hash_object.hexdigest()
+print (hex_dig)
+
+#SHA-256 가장 안전한 해쉬 알고리즘
+```
+
+> 내가 이해하기로는 해쉬는 딕션을 이용해서 풀이하는게 기본인듯 하다.
+
+
+
+## 조합 알고리즘
+
+```python
+def comb(lst, n):
+    ret = []
+    if n > len(lst): return ret
+
+    if n == 1:
+        for i in lst:
+            ret.append([i])
+    elif n > 1:
+        for i in range(len(lst) - n + 1):
+            for temp in comb(lst[i + 1:], n - 1):
+                ret.append([lst[i]] + temp)
+
+    return ret
+
+items = [1,2,3,4,5]
+print(comb(items,2))
+# def perm(lst,n):
+# 	ret = []
+# 	if n > len(lst): return ret
+#
+# 	if n==1:
+# 		for i in lst:
+# 			ret.append([i])
+# 	elif n>1:
+# 		for i in range(len(lst)):
+# 			temp = [i for i in lst]
+# 			temp.remove(lst[i])
+# 			for p in perm(temp,n-1):
+# 				ret.append([lst[i]]+p)
+#
+# 	return ret
+
+
+def dfs_comb(lst, n):
+    ret = []
+    idx = [i for i in range(len(lst))]
+
+    stack = []
+    for i in idx[:len(lst) - n + 1]:
+        stack.append([i])
+
+    while len(stack) != 0:
+        cur = stack.pop()
+
+        for i in range(cur[-1] + 1, len(lst) - n + 1 + len(cur)):
+            temp = cur + [i]
+            if len(temp) == n:
+                element = []
+                for i in temp:
+                    element.append(lst[i])
+                ret.append(element)
+            else:
+                stack.append(temp)
+    return ret
+
+ls = [1,2,3,4]
+def combinationz(ls, n):
+    ret = []
+    if n == 0 or n>len(ls):
+        pass
+    elif n == 1:
+        ret += list(map(lambda x:{x}, ls))
+    else:
+        for i in range(len(ls)):
+            ret += list(map(lambda x: {ls[i]}|x, combinationz(ls[i+1:], n-1)))
+    return ret
+
+def permutationz(ls, n):
+    ret = []
+    if n == 0 or n>len(ls):
+        return ret
+    elif n == 1:
+        return list(map(lambda x:(x,), ls))
+    else:
+        for i in range(len(ls)):
+            temp = [e for e in ls]
+            temp.remove(ls[i])
+            ret += tuple(map(lambda x: (ls[i], ) + x ,permutationz(temp, n-1)))
+    return ret
+
+
+print(combinationz(ls, 2))
+print(permutationz(ls, 2))
+```
+
+
+
+##  소수 판별식
+
+```python
+테네스의 소수 판별 제일 빠른 식
+seive = [False, False] + [True] * (1000000 - 1)
+for k in range(2, int(1000000 ** 0.5 + 1.5)):
+    if seive[k]:
+        seive[k*2::k] = [False] * ((1000000 - k) // k)
+
+
+def getPrimeList(n):
+    # 탐색 시작 범위에 따라 앞에 0과 1의 자리를 리스트에 추가해주면됨
+    # [False,False] + [True] * n
+    seive = [True] * n
+
+    for i in range(2,int(n**0.5)+1):
+        if seive[i]:
+            # 처음 소수의 다음 배수 부터 범위 지정
+            for j in range(2*i,n,i):
+                seive[j] = False
+
+    return [i for i in range(2,n) if seive[i]]
+```
+
+
+
+## 이진 탐색(algo & bisect)
+
+```python
+# 실행전 정렬 필수
+# 이진탐색 알고리즘
+start, end = 0, len(value)
+while start <= end and start < len(value):
+            mid = (start + end) // 2
+            if value[mid] < score:
+                start = mid + 1
+            else:
+			   end = mid - 1
+            
+# 이진탐색 라이브러리
+import bisect
+bisect_left , bisect_right
+뒤에 생략할 경우 right라고 간주
+bisect(value,num)의 인덱스를 찾아준다
+
+bisect.bisect_left(arr,x) = arr이 정렬되어 있다는 가정하에 x값이 들어갈 위치를 반환, 경계값은 왼쪽으로 포함. 해당 인덱스 
+
+bisect.bisect_right(arr,x) = arr이 정렬되어 있다는 가정하에 x값이 들어갈 위치를 반환, 경계값은 오른쪽으로 포함. 해당 인덱스 + 1
+# 경계값을 시작점(<=)으로 구성하는 경우가 많아 rigth를 더 많이 사용
+
+nums = [0,1,2,3,4,5,6,7,8,9] 
+n = 5 
+print(bisect_left(nums, n)) 
+print(bisect_right(nums, n)) 
+''' 결과값 5 6 '''
+
+nums = [4, 5, 5, 5, 5, 5, 5, 5, 5, 6] 
+n = 5 
+print(bisect_left(nums, n)) 
+print(bisect_right(nums, n)) 
+''' 결과값 1 9 '''
+
+
+```
+
+
+
+## 진수 변환
+
+### - 2진수  알고리즘
+
+```python
+def solution(n):
+ 
+    bin_num = ''  # 빈 문자열을 하나 만들고
+    while 1 <= n: # 1 보다 작아지면 반복문을 그만
+        modNum = n % 2 # 2를 나눈 나머지를  modNum 변수에 담고
+        bin_num = str(modNum) + bin_num # modNum 문자열에 계속 추가해준다.
+        # 앞에서 추가하고 있어서 뒤집어줄 필요 없음
+        n = n // 2 # n은 2를 나눈 몫으로 계속 갱신해준다.
+    int(bin_num) # 문자열인 bin_num 을 정수로 바꿔준다.
+ 
+    return bin_num
+```
+
+### - 기본 방법
+
+```python
+b = bin(value)
+o = oct(value)
+h = hex(value)
+
+# 0b111100
+# 0o74
+# 0x3c
+이런식으로 접두어가 붙는다(슬라이싱으로 없애기 가능 b[2:]
+
+접두어 없이 변환은
+b = format(value, 'b')
+o = format(value, 'o')
+h = format(value, 'x')
+
+다른 진수형태에서 10진수로 변환
+b = int('0b111100' , 2)
+o = int('0o74' , 8)
+h = int('0x3c' , 16)
+
+```
+
+
+
+### - n 진수 변환
+
+```python
+# 1
+import string
+
+tmp = string.digits+string.ascii_lowercase
+def convert(num, base) :
+    q, r = divmod(num, base)
+    if q == 0 :
+        return tmp[r] 
+    else :
+        return convert(q, base) + tmp[r]
+
+# 2
+NOTATION = '0123456789ABCDEF'
+
+def convert(num, base) :
+    # divmod 몫과 나머지를 튜플로 반환
+    q, r = divmod(num, base)
+    n = NOTATION[r]
+    return convert(q, base) + n if q else n
+
+```
+
+
+
+## 최대 공약수, 최소공배수
+
+gcd(greatest common divisor 최대 공약수)
+
+lcm(최소 공배수), 두 숫자의 곱에 최대공약수를 나눠준 값이 최소 공배수가 된다
+
+```python
+# 1 gcd 반복문
+def gcd(a,b):
+    while b !=0:
+        d = a % b
+        a = b
+        b = d
+    return a
+
+# 2 재귀적 방법
+def gcd(m,n):
+    if m < n:
+        m,n = n,m
+    if n == 0:
+        return m
+    # 밑에 부분은 있어야 하는듯, 없어도 되지만 가지치기 느낌
+    if m % n == 0:
+        return n
+    else:
+        return gcd(n,m%n)
+    
+# 3 간략한 재귀
+def gcd(a, b):
+    if b == 0:
+        return a
+    return gcd(b, a%b)
+
+
+# lcm
+def lcm(a, b):
+    return a*b//gcd(a,b)
+```
+
+
+
+## 간선정보 정석 풀이
+
+```python
+# 간선정보 정석풀이, 입력 받기
+
+def dfs(s,k):
+    global ans
+    visit[s]=1
+    ans=max(ans,k)
+    for w in G[s]:
+        if visit[w]:continue
+        dfs(w,k+1)
+    visit[s]=0
+
+for T in range(int(input())):
+    n,m=map(int,input().split())
+    G=[[] for _ in range(n+1)]
+    ans=-1
+    for _ in range(m):
+        u,v=map(int,input().split())
+        G[u].append(v)
+        G[v].append(u)
+    for i in range(n):
+        visit=[0]*(n+1)
+        dfs(i,1)
+    print('#%d %d'%(T+1,ans))
+```
+
+
+
+## 거듭제곱
+
+```python
+# 빠른 거듭제곱 방법
+def x_y(x, y):
+    xy = 1
+    while y > 0:
+        if(y % 2) == 1:
+            xy *= x
+            y -= 1
+            # xy %= m
+        x *= x
+        # x %= m
+        y /= 2
+    return xy
+
+print(x_y(2,10))
+```
+
+
+
+## 투 포인터
+
+인덱스를 가리키는 두 개의 변수(포인터)를 선언하여 사용
+
+시작과 끝점 2개의 점으로 접근할 데이터 범위 표현 가능
+
+보통 리스트에 순차적으로 접근해야 할 때, 2개의 점의 위치를 기록하면서 처리
+
+특정한 합을 가지는 부분 연속 수열문제 적용 가능
+
+적용 방법
+
+​	**1-1) 현재까지의 합이 M보다 크거나 같은 경우 합에서 endPointer가 가리키고 있는 값을 뺀 후 endPointer를 +1 증가시킵니다.**
+
+​	**1-2) 만약 startPointer의 값이 배열의 길이와 같을 경우 탐색을 종료합니다.**
+
+​	**1-3) 나머지 경우(현재까지의 합이 M보다 작을 경우)에는 합에 startPointer가 가리키고 있는 값을 더한 후 startPointer를 +1 증가시킵니다.**
+
+​	**2) 위의 세 규칙 중 해당하는 연산이 끝난 후 만약 현재까지의 합이 M과 같다면 답을 +1증가 시킵니다.**
+
+```python
+# 한 개의 리스트
+# 밑에 예시 두개는 연속된 부분합, 특정 인덱스 수의 합이 아님!
+n = 5 # 데이터의 개수 N
+m = 5 # 찾고자 하는 부분합 M
+data = [1, 2, 3, 2, 5] # 전체 수열
+
+count = 0
+interval_sum = 0
+end = 0
+
+# start를 차례대로 증가시키며 반복
+for start in range(n):
+    # end 를 가능한 만큼 이동시키기
+    while interval_sum < m and end < n:
+        interval_sum += data[end]
+        end += 1
+    # 부분합이 m일 때 카운트 증가
+    if interval_sum == m:
+        count += 1
+    interval_sum -= data[start]
+    
+print(count) # 3
+
+
+# 두 개의 리스트 비교할 때
+# 사전에 정렬된 리스트 A와 B 선언
+n, m = 3, 4
+a = [1, 3, 5]
+b = [2, 4, 6, 8]
+
+# 리스트 A와 B의 모든 원소를 담을 수 있는 크기의 결과 리스트 초기화
+result = [0] * (n + m)
+i = 0
+j = 0
+k = 0
+
+# 모든 원소가 결과 리스트에 담길 때까지 반복
+while i < n or j < m:
+    # 리스트 B의 모든 원소가 처리되었으나,리스트 A의 원소가 더 작을 때
+    if j >= m or (i < n and a[i] <= b[j]):
+        # 리스트 A의 원소를 결과 리스트로 옮기기
+        result[k] = a[i]
+        i += 1
+    # 리스트 A의 모든 원소가 처리되었거나, 리스트 B의 원소가 더 작을 때
+    else:
+        # 리스트 B의 원소를 결과 리스트로 옮기기
+        result[k] = b[j]
+        j += 1
+    k += 1
+    
+# 결과 리스트 출력
+for i in result:
+    print(i, end=' ') # 1 2 3 4 5 6 8
+    
+    
+# 기본 투 포인터
+'''
+여기서 정렬하고 뒤에서부터 찾는 이유는 합이 특정 숫자가 되어야하는데 맨앞과 맨뒤에서부터 찾으면
+어차피 정렬되어있는 숫자들이니까 만족 안하는 숫자들은 넘겨도 된다
+[1,2,3,4,7,8,9,10] 
+합이 11이 되어야하면 
+1과 10 이후 여기서 시작 포인터를 늘려주는건 동일 숫자가 존재 가능해서
+2랑 10이면 넘기고 끝 포인터를 줄여주면 됨 
+즉 인덱스 늘이거나 줄엿을때 이전 상황을 신경 안써도 됨
+'''
+data.sort()
+i = 0
+j = n - 1
+while i != j:
+    if data[i] + data[j] == x:
+        cnt += 1
+        # 정렬된 수에서 동일한 숫자가 존재할수 있으니 i의 인덱스를 늘리는게 맞음
+        # 단 이 문제에서는 서로 다른 양수니까 j -= 1 추가도 가능
+        i += 1
+    elif data[i] + data[j] > x:
+        j -= 1
+    else:
+        i += 1
+```
+
