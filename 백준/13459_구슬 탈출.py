@@ -30,7 +30,7 @@ while q:
         nbx, nby, bcnt = move(bx, by, dir[0], dir[1])
         if board[nbx][nby] != 'O':
             if board[nrx][nry] == 'O':
-                print(cnt)
+                print(1)
                 sys.exit()
             if nrx == nbx and nry == nby:
                 # res.append(dir)
@@ -44,4 +44,4 @@ while q:
                 visited[nrx][nry][nbx][nby] = True
                 q.append((nrx,nry,nbx,nby,cnt+1))
 
-print(-1)
+print(0)
