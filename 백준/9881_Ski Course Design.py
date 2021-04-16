@@ -7,7 +7,7 @@ costs = 1e9
 for i in range(0, 83):
     tempcost = 0
 
-    for hill in hills:
+    for hill in hills: 
         if hill < i:
             tempcost += ((i - hill) * (i - hill))
         elif hill > i + 17:
