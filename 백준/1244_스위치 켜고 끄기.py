@@ -3,7 +3,7 @@ switch = list(input().split())
 students = int(input())
 for _ in range(students):
     sex, num = map(int,input().split())
-    print(switch)
+    # print(switch)
     if sex == 1:
         for i in range(num-1,n,num):
             if switch[i] == '1':
@@ -12,10 +12,11 @@ for _ in range(students):
                 switch[i] = '1'
     else:
         st,ed = num-1,num-1
-        if switch[num-1] == '1':
-            switch[num-1] = '0'
-        else:
-            switch[num-1] = '1'
+        # if switch[num-1] == '1':
+        #     switch[num-1] = '0'
+        #     print(1)
+        # else:
+        #     switch[num-1] = '1'
         while st >=0 and ed < n:
             if switch[st] == switch[ed]:
                 if switch[st] == '1':
@@ -26,5 +27,6 @@ for _ in range(students):
                 ed+=1
             else:
                 break
-print(switch)
+for i in range(0,n,20):
+    print(' '.join(switch[i:i+20]))
 
