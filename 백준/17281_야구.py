@@ -13,8 +13,7 @@ def game(line_ups):
         outcount = 0
         b1, b2, b3 = 0, 0, 0
         while outcount < 3:
-            # 이 변수 할당 하나가 시간초과를 만들었다.
-            # hit_type = each_inning[line_ups[hitter_idx]]
+
             if each_inning[line_ups[hitter_idx]] == 0:
                 outcount += 1
             elif each_inning[line_ups[hitter_idx]] == 1:
@@ -32,7 +31,6 @@ def game(line_ups):
 
             hitter_idx = (hitter_idx + 1) % 9
     return score
-
 
 for line_ups in permutations(range(1, 9), 8):
     line_ups = list(line_ups[:3]) + [0] + list(line_ups[3:])
