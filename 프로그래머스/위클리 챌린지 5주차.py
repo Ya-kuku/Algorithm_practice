@@ -5,7 +5,8 @@ def solution(word):
     # tmp = list(map(''.join,permutations(vowels,3)))
     # print(tmp)
     # for i in range(1,6):
-    #     tmp = list(map(''.join, product(['A', 'E', 'I', 'O', 'U'], repeat=i)))
+    #     tmp = list(map(' '.join, product(['A', 'E', 'I', 'O', 'U'], repeat=i)))
+    #     print(tmp)
     words = []
     for i in range(5):
         tmp_word = ''
