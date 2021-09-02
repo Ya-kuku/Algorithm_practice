@@ -5,19 +5,21 @@ def solution(word, pages):
     exlinkToUrl = {}
     word = word.lower()
     for idx, page in enumerate(pages):
-        # print(page)
+        page = page.lower()
         # \S = 숫자, 문자, 특수문자 모두 포함(공백 제외)
         #() = 추출한 부분의 그룹핑
         # 정확하게는 <meta[^>]*content="https://([\S]*)"/> 까지가 맞음
-        page = page.lower()
         url = re.search(r'<meta[^>]*content="https://([\S]*)"',page).group(1)
 
         urlToIdx[url.lower()] = idx
         cnt = 0
+
         # 포함된 단어 찾기
+        # word와 page를 모둔 소문자화 시켰기 때문에 단어를 찾을 때 소문자로만 검색했음
         for f in re.findall(r'[a-z]+',page):
             if f == word:
                 cnt += 1
+
         tmp_link = set()
         # 포함된 링크 찾기
         for e in re.findall(r'<a href="https://[\S]*"',page):
@@ -27,6 +29,9 @@ def solution(word, pages):
         urlToScore[url].append(cnt)
         urlToScore[url].append(len(tmp_link))
 
+        # 해당 url을 외부링크로 사용하는 페이지들의 점수를 구해야함
+        # 참고링크 리스트에 해당 url을 추가하는 방식으로 구함
+        # a : [b,c], b : [a], c : [b]
         for link in tmp_link:
             if link not in exlinkToUrl:
                 exlinkToUrl[link] = []
