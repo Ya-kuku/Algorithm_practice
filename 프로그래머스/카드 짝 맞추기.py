@@ -60,7 +60,7 @@ def move_cost(board, start, end):   # 조작 횟수 Count
     if start==end: return 0
     queue, visit = deque([[start[0], start[1], 0]]), {start}
     while queue:                    # BFS
-        x, y, c = queue.popleft()
+        x, y, c = queue.popleft() 
         for dx, dy in [(0,1),(0,-1),(1,0),(-1,0)]:
             nx, ny = x+dx, y+dy     # Normal move
             cx, cy = x, y
